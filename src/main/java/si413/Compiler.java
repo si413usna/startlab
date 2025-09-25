@@ -2,6 +2,8 @@ package si413;
 
 import java.nio.file.Path;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -26,7 +28,16 @@ public class Compiler {
     }
 
     public void compile(ParseTree ptree) throws IOException {
-        // TODO copy preamble (helper function definitions) to dest
+        // copy contents of preamble.ll in the resources directory
+        try (BufferedReader preamble = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream("preamble.ll"))))
+        {
+            while (true) {
+                String line = preamble.readLine();
+                if (line == null) break;
+                dest.println(line);
+            }
+        }
 
         dest.println("define i32 @main() {");
 

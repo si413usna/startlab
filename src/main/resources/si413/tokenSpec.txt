@@ -1,0 +1,10 @@
+# tokens for small subset of Python
+CONCAT:   \+
+LP:       \(
+RP:       \)
+PRINT:    print
+BOOLLIT:  True|False
+NOT:      not
+STRLIT:   "([^"\\]|\\.)*"
+ignore:   #.*
+ignore:   [ \t\n]

@@ -1,0 +1,45 @@
+# SI413 Lab 3.1: Spec and interpreter for iffy language
+
+your_name: BLAH BLAH
+
+your_alpha: BLAH
+
+used_ai: Y # remember to turn in an aichat.md file as well
+
+language_name: BLAH
+
+# leave this as NONE for your initial submission
+changes_on_resubmit: |
+    NONE
+
+# describe any collaboration or help you got from classmates
+collaboration: |
+    NONE
+
+# this is the example program that you make up
+example_program: |
+    BLAH BLAH
+    BLAH BLAH
+
+example_input_1: |
+    BLAH BLAH
+
+example_output_1: |
+    BLAH BLAH
+
+example_input_2: |
+    BLAH BLAH
+
+example_output_2: |
+    BLAH BLAH
+
+
+# your implementation of the "dance" program in your language
+dance_program: |
+    BLAH BLAH
+    BLAH BLAH
+
+
+# something else your instructor should know?
+any_other_comments_for_me: |
+    NONE

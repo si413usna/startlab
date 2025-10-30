@@ -3,6 +3,8 @@ package si413;
 /** This file contains a generic tokenizer based on the tokenSpec.txt file.
  * You should NOT need to change anything here - just change the
  * tokenSpec.txt file for your language as needed.
+ * This is version 2.0 of the tokenizer. It reads in the entire input into
+ * a single string for matching, rather than one character at a time.
  */
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -18,7 +21,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -27,7 +30,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.CommonTokenFactory;
 import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.Pair;
 
 /** Generic Tokenizer (aka Scanner or Lexer) based on Java regex library.
@@ -49,10 +52,10 @@ import org.antlr.v4.runtime.misc.Pair;
  */
 public class Tokenizer {
     /** Token type used internally to indicate a regex should be skipped. */
-    public static final int IGNORE_TYPE = -5;
+    public static final int IGNORE_TYPE = Integer.MAX_VALUE;
 
     /** The internal representation of a single token spec, which has a type and a regex. */
-    private static record TokenSpec(int type, Predicate<String> matches) { }
+    private static record TokenSpec(int type, Pattern pat) { }
 
     /** Regex used to parse each line of the tokenSpec.txt file.
      * Distinguishes between blank or comment lines, and valid token spec lines.
@@ -106,114 +109,110 @@ public class Tokenizer {
                         Errors.error(String.format("Token %s not found in vocab", tokName));
                     }
                 }
-                specs.add(new TokenSpec(tokType, Pattern.compile(pat, Pattern.MULTILINE).asMatchPredicate()));
+                specs.add(new TokenSpec(tokType, Pattern.compile(pat, Pattern.MULTILINE)));
             }
         }
     }
 
     /** Produces a stream of tokens from the given input file. */
     public TokenStream streamFrom(Path sourceFile) throws IOException {
-        return new BufferedTokenStream(new Tokens(CharStreams.fromPath(sourceFile)));
+        return new CommonTokenStream(new Tokens(sourceFile));
     }
 
     /** TokenSource implementation to get tokens from a source file.
      * The most important method is nextToken().
      */
     public class Tokens implements TokenSource {
-        private TokenFactory<?> tokenFactory = CommonTokenFactory.DEFAULT;
-        private CharStream source;
+        private static record TokMatch(int tokType, Matcher matcher) { }
+
+        private String text;
+        private Pair<TokenSource,CharStream> sourcePair;
+        private Set<Integer> disabledTokens;
+        private List<TokMatch> matchers;
+        private int pos = 0;
         private int line = 1;
         private int col = 1;
         private boolean hitEOF = false;
-        private Pair<TokenSource,CharStream> sourcePair;
-        private Set<Integer> disabledTokens;
+        private TokenFactory<?> tokenFactory = CommonTokenFactory.DEFAULT;
 
-        public Tokens(CharStream source) {
-            this.source = source;
-            this.sourcePair = new Pair<>(this, source);
+        public Tokens(Path sourceFile) throws IOException{
+            this(Files.readString(sourceFile), sourceFile.toString());
+        }
+
+        public Tokens(String sourceText, String sourceName) {
+            this.text = sourceText;
+            this.sourcePair = new Pair<>(this, CharStreams.fromString(text, sourceName));
             this.disabledTokens = new HashSet<>(initialDisabledTokens);
+            this.matchers = specs.stream()
+                .map(tspec -> new TokMatch(tspec.type, tspec.pat.matcher(text)))
+                .collect(Collectors.toUnmodifiableList());
         }
 
         @Override
         public Token nextToken() {
-            // return EOF token if already at the end
-            if (hitEOF) return tokenFactory.create(Token.EOF, null);
-
-            StringBuilder tokText = new StringBuilder();
-            int type = Token.INVALID_TYPE;
-            int startLine = line;
-            int startCol = col;
-            int mark = source.mark();
-            int markIndex = source.index();
-
-            // keep adding characters to tokText unitl transition
-            // from matching to non-matching
-            while (true) {
-                int nextChar = source.LA(1);
-                if (nextChar == CharStream.EOF) {
-                    hitEOF = true;
-                    break;
-                }
-                int popLength = tokText.length();
-                tokText.appendCodePoint(nextChar);
-                boolean matched = false;
-                for (TokenSpec spec : specs) {
-                    if (!disabledTokens.contains(spec.type())
-                            && spec.matches().test(tokText.toString()))
-                    {
-                        matched = true;
-                        type = spec.type();
-                        break;
-                    }
-                }
-                if (!matched && type != Token.INVALID_TYPE) {
-                    // tokenization finished; we previously had a valid token
-                    // but no longer
-                    tokText.setLength(popLength);
-                    break;
-                }
-                source.consume();
-                // update line and column number bookkeeping
-                if (nextChar == '\n') {
-                    ++line;
-                    col = 1;
-                }
-                else ++col;
+            // check for end of file
+            if (pos == text.length()) {
+                return tokenFactory.create(
+                    sourcePair,
+                    Token.EOF,
+                    null,
+                    Token.DEFAULT_CHANNEL,
+                    0,
+                    0,
+                    line,
+                    col
+                );
             }
-            if (tokText.length() == 0 && hitEOF) {
-                source.release(mark);
-                return tokenFactory.create(Token.EOF, null);
+
+            // find the longest match starting at pos - maximal munch!
+            int bestEnd = -1;
+            int bestType = -1;
+            for (TokMatch tm : matchers) {
+                if (!disabledTokens.contains(tm.tokType)
+                    && tm.matcher.find(pos)
+                    && tm.matcher.start() == pos
+                    && tm.matcher.end() > bestEnd
+                ) {
+                    bestEnd = tm.matcher.end();
+                    bestType = tm.tokType;
+                }
             }
-            if (type == Token.INVALID_TYPE) {
-                source.seek(markIndex);
-                line = startLine;
-                col = startCol;
-                source.release(mark);
-                tokText.setLength(10);
+
+            if (bestEnd <= pos) {
+                // no (non-empty) match found
                 Errors.syntax(
                     "Tokenizer",
                     getSourceName(),
                     line,
                     col,
-                    String.format("invalid token starting with '%s'", tokText.toString()));
-            }
-            source.release(mark);
-            if (type == IGNORE_TYPE) {
-                return nextToken(); // skip this match and recurse for the next one
-            }
-            else {
-                assert tokText.length() > 0;
-                return tokenFactory.create(
-                    sourcePair,
-                    type,
-                    tokText.toString(),
-                    Token.DEFAULT_CHANNEL,
-                    0,
-                    tokText.length()-1,
-                    startLine,
-                    startCol
+                    String.format("invalid token starting with '%s'",
+                        text.substring(pos, Math.min(text.length(), pos+20)))
                 );
             }
+
+            // create the actual token that will be returned
+            Token result = tokenFactory.create(
+                sourcePair,
+                bestType,
+                text.substring(pos, bestEnd),
+                (bestType == IGNORE_TYPE ? Token.HIDDEN_CHANNEL : Token.DEFAULT_CHANNEL),
+                0,
+                bestEnd-pos-1,
+                line,
+                col
+            );
+
+            // advance the position and keep track of line numbers
+            while (pos < bestEnd) {
+                if (text.charAt(pos) == '\n') {
+                    ++line;
+                    col = 1;
+                }
+                else ++col;
+                ++pos;
+            }
+
+            return result;
         }
 
         public void disableToken(int type) {
@@ -226,12 +225,12 @@ public class Tokenizer {
 
         @Override
         public String getSourceName() {
-            return source.getSourceName();
+            return sourcePair.b.getSourceName();
         }
 
         @Override
         public CharStream getInputStream() {
-            return source;
+            return sourcePair.b;
         }
 
         @Override

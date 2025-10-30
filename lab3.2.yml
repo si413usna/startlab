@@ -1,4 +1,4 @@
-# SI413 Lab 2.3: Compiler for StringBoolVar language
+# SI413 Lab 3.2: Compiler for Iffy language
 
 your_name: BLAH BLAH
 
@@ -19,3 +19,25 @@ collaboration: |
 # something else your instructor should know?
 any_other_comments_for_me: |
     NONE
+
+# feel free to copy these example programs and inputs/outputs
+# from the previous lab
+example_program: |
+    BLAH BLAH
+    BLAH BLAH
+
+example_input_1: |
+    BLAH BLAH
+
+example_output_1: |
+    BLAH BLAH
+
+example_input_2: |
+    BLAH BLAH
+
+example_output_2: |
+    BLAH BLAH
+
+dance_program: |
+    BLAH BLAH
+    BLAH BLAH

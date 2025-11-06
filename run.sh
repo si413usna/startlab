@@ -2,7 +2,7 @@
 
 # This script compiles and runs a Java class using maven
 # usage: run.sh [-c ClassName] [args...]
-# The ClassName defaults to Interpreter
+# The ClassName defaults to Compiler
 
 set -euo pipefail
 
@@ -12,7 +12,7 @@ if [[ $# -ge 2 && $1 = '-c' ]]; then
   class=$2
   shift 2
 else
-  class=Interpreter
+  class=ParseTreeGen
 fi
 
 mvn -f"$topdir" clean compile exec:java \

@@ -1,4 +1,4 @@
-# SI413 Lab 3.1: Spec and interpreter for iffy language
+# SI413 Lab 4.1: Spec and interpreter for iffy language
 
 your_name: BLAH BLAH
 
@@ -40,8 +40,8 @@ example_output_2: |
     BLAH BLAH
 
 
-# your implementation of the "dance" program in your language
-dance_program: |
+# your implementation of the "dinner" program in your language
+dinner_program: |
     BLAH BLAH
     BLAH BLAH
 

@@ -98,26 +98,6 @@ public class ASTGen {
         }
     }
 
-    private class ParamListVisitor extends Visitor<List<String>> {
-        @Override
-        public List<String> visitManyParams(ParseRules.ManyParamsContext ctx) {
-            List<String> res = new ArrayList<>();
-            res.add(ctx.VARNAME().getText());
-            res.addAll(visit(ctx.paramList()));
-            return res;
-        }
-
-        @Override
-        public List<String> visitOneParam(ParseRules.OneParamContext ctx) {
-            return List.of(ctx.VARNAME().getText());
-        }
-
-        @Override
-        public List<String> visitNoParams(ParseRules.NoParamsContext ctx) {
-            return List.of();
-        }
-    }
-
     private class ExprVisitor extends Visitor<Expr> {
         @Override
         public Expr visitParenExpr(ParseRules.ParenExprContext ctx) {
@@ -207,30 +187,8 @@ public class ASTGen {
         }
     }
 
-    private class ExprListVisitor extends Visitor<List<Expr>> {
-        @Override
-        public List<Expr> visitManyArgs(ParseRules.ManyArgsContext ctx) {
-            List<Expr> res = new ArrayList<>();
-            res.add(exprVis.visit(ctx.expr()));
-            res.addAll(visit(ctx.argList()));
-            return res;
-        }
-
-        @Override
-        public List<Expr> visitOneArg(ParseRules.OneArgContext ctx) {
-            return List.of(exprVis.visit(ctx.expr()));
-        }
-
-        @Override
-        public List<Expr> visitNoArgs(ParseRules.NoArgsContext ctx) {
-            return List.of();
-        }
-    }
-
     private ProgVisitor progVis = new ProgVisitor();
     private StmtListVisitor stlVis = new StmtListVisitor();
     private StmtVisitor stVis = new StmtVisitor();
     private ExprVisitor exprVis = new ExprVisitor();
-    private ParamListVisitor plVis = new ParamListVisitor();
-    private ExprListVisitor elVis = new ExprListVisitor();
 }

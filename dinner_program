@@ -1,0 +1,47 @@
+# Table tracker
+f table_tracker(name) {
+first -> Cooked <- first
+total -> "" <- total
+f order(food) {
+bawk "Table " + name + " ordering " + food bawk
+carve (!first) {
+total -> total + ", " + food <- total
+}
+carve (first) {
+first -> Uncooked <- first
+total -> food <- total
+}
+sleep total
+}
+sleep order
+}
+#String_eq
+f string_eq(s1, s2) {
+sleep !(s1 < s2) & !(s2 < s1)
+}
+#Main
+table1param -> "CS profs" <- table1param
+table1 -> table_tracker(table1param) <- table1
+kimchi -> "Kimchi" <- kimchi
+table1(kimchi)
+bawk "Your name?" bawk
+table2param -> stuffing <- table2param
+table2 -> table_tracker(table2param) <- table2
+done -> Uncooked <- done
+t2got -> "nothing" <- t2got
+w (!done){
+bawk "What do you want" bawk
+food -> stuffing <- food
+result -> string_eq(food, done) <- result
+carve (result) {
+done -> Cooked <- done
+}
+carve (!result){
+t2got -> table2(food) <- t2got
+}
+}
+table1param2 -> "Tteokbokki" <- table1param2
+table1(table1param2)
+total1param -> "Samgyeopsal" <- total1param
+total1 -> table1(total1param) <- total1
+bawk "We got " + total1 + " and you got " + table2_total bawk

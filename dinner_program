@@ -1,0 +1,52 @@
+@ Table tracker program in EasyAs @
+
+fct tabletracker (name) {
+    store first -> B[FR]  @ first order flag @
+    store total -> S[]  @ accumulated orders @
+
+    fct order (food) {
+        display.S[Table ]+name+S[ ordering ]+food
+
+        i first {
+            store first -> B[LIES]
+            store total -> food
+        } e {
+            store total -> (total + S[, ] + food)
+        }
+
+        total
+    }
+
+    order
+}
+
+fct stringeq (s1, s2) {
+    (B?(s1--s2)) # (B?(s2--s1))
+}
+
+@ Ask CS profs table first order @
+store table1 -> ##tabletracker(S[CS profs])
+##table1(S[Kimchi])
+
+@ Ask user's name @
+display.S[Your name?]
+store table2 -> ##tabletracker(ask.S)
+
+store done -> B[LIES]  @ loop control @
+store t2got -> S[nothing]
+
+w B?done {
+    display.S[What do you want?]
+    store food -> ask.S
+
+    i ##stringeq(food,S[done]) {
+        store done -> B[FR]
+    } e {
+        store t2got -> ##table2(food)
+    }
+}
+
+##table1(S[Tteokbokki])
+store total1 -> ##table1(S[Samgyeopsal])
+
+display.S[We got ] + total1 + S[ and you got ] + t2got

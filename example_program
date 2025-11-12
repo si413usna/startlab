@@ -1,0 +1,64 @@
+@ Minimal EasyAs test program @
+
+display.S[Welcome to EasyAs!]
+
+@ Input and variable storage @
+store name -> ask.S
+store isStudent -> ask.B
+
+@ String operations @
+display.S[Hello, ] + name
+display.S[hello] * (-1)
+
+@ Boolean literals and operations @
+display.S[BOOLEAN LITERALS]
+display.B[FR]
+display.B[LIES]
+
+
+@ Boolean logic operators @
+display.S[BOOLEAN OPERATORS]
+store resultAnd -> isStudent # B[FR]
+store resultOr  -> isStudent ! B[LIES]
+display.resultAnd
+display.resultOr
+
+@ String comparisons @
+display.S[STRING COMPARISONS]
+store a -> ask.S
+store b -> ask.S
+store less -> a -- b
+store greater -> a ++ b
+store contained -> a ^ b
+display.less
+display.greater
+display.contained
+
+@ If/Else @
+display.S[IF/ELSE]
+i isStudent {
+    display.S[You are a student!]
+} e {
+    display.S[You are not a student!]
+}
+
+@ While loop @
+display.S[WHILE LOOP]
+store flag -> B[FR]
+w flag {
+    display.S[Looping once]
+    store flag -> B[LIES]
+}
+
+@ Function declaration and call @
+display.S[FUNCTIONS]
+fct greet(person) {
+    display.S[Hi, ] + person
+    B[FR]
+}
+##greet(name)
+
+
+@ Lambda function @
+store f -> (x) => { S[Lambda says hi to ] + x }
+display.##f(name)

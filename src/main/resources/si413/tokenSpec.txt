@@ -1,2 +1,30 @@
-# FILL IN YOUR TOKEN DEFINITIONS HERE
-ignore:  [ \t\n]
+DISPLAY:        display\.
+ASK:            ask\.
+STORE:          store
+IF:             i
+ELSE:           e
+WHILE:          w
+FUNC:           fct
+CALL:           ##
+LAMBDAARROW:    =>
+ASSIGN:         ->
+TYPES:          S
+TYPEB:          B
+BOOLLIT:        B\[(FR|LIES)\]
+STRLIT:         S\[((?:[^-\]]|-(?!\])|-\])*)\]
+REVERSE:        \* *\(-1\)
+NOT:            \?
+LESSTHAN:       --
+GREATERTHAN:    \+\+
+CONTAINS:       \^
+CONCAT:         \+
+AND:            \#
+OR:             \!
+LPAREN:         \(
+RPAREN:         \)
+LCURLY:         \{
+RCURLY:         \}
+COMMA:          ,
+VARNAME:        [a-zA-Z0-9]+
+ignore:         @[^@]*@
+ignore:         [ \t\r\n]

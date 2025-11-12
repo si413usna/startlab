@@ -1,6 +1,11 @@
-# Lab 4.2 starter code for EasyAs language
+# Lab 4.2 starter code for Simple language
 
-This language was created by Kaj Dongre.
+This language was created by Tate Murphy, who writes:
+
+> In lab 2, before we had seen Scheme, I had the idea of making a
+> function-based language. Although I didn't  understand what that fully
+> entailed, I thought I could simplify writing a language by making everything
+> "like a function".
 
 ## Example programs and test files
 

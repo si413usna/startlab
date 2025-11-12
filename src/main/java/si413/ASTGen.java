@@ -18,7 +18,8 @@ public class ASTGen {
      * This is the main external interface for the ASTGen class.
      */
     public static Stmt.Block gen(ParseRules.ProgContext parseTree) {
-        return new ASTGen().stlVis.visit(parseTree);
+        //return new ASTGen().stlVis.visit(parseTree);
+        return null;
     }
 
     /** Use this as the subclass for the visitor classes.
@@ -36,89 +37,73 @@ public class ASTGen {
 
     private class StmtListVisitor extends Visitor<Stmt.Block> {
         @Override
-        public Stmt.Block visitRegProg(ParseRules.RegProgContext ctx) {
-            return visit(ctx.stmtList());
-        }
-
-        @Override
-        public Stmt.Block visitRegStmtList(ParseRules.RegStmtListContext ctx) {
+        public Stmt.Block visitRegularProg(ParseRules.RegularProgContext ctx) {
             List<Stmt> children = new ArrayList<>();
-            children.add(stVis.visit(ctx.stmt()));
-            children.addAll(visit(ctx.stmtList()).children());
+            children.add(stVis.visit(ctx.stat()));
+            children.addAll(visit(ctx.prog()).children());
             return new Stmt.Block(children);
         }
 
         @Override
-        public Stmt.Block visitEmptyStmt(ParseRules.EmptyStmtContext ctx) {
+        public Stmt.Block visitEmptyProg(ParseRules.EmptyProgContext ctx) {
+            return new Stmt.Block(List.of());
+        }
+
+        @Override
+        public Stmt.Block visitLRBracket(ParseRules.LRBracketContext ctx) {
+            return visit(ctx.inner());
+        }
+
+        @Override
+        public Stmt.Block visitInnerInner(ParseRules.InnerInnerContext ctx) {
+            List<Stmt> children = new ArrayList<>();
+            children.add(stVis.visit(ctx.stat()));
+            children.addAll(visit(ctx.inner()).children());
+            return new Stmt.Block(children);
+        }
+
+        @Override
+        public Stmt.Block visitEmptyInner(ParseRules.EmptyInnerContext ctx) {
             return new Stmt.Block(List.of());
         }
     }
 
     private class StmtVisitor extends Visitor<Stmt> {
         @Override
-        public Stmt visitAssignStr(ParseRules.AssignStrContext ctx) {
-            return new Stmt.Assign(ctx.ID().getText(), eVis.visit(ctx.strEx()));
+        public Stmt visitPrintStat(ParseRules.PrintStatContext ctx) {
+            return new Stmt.Print(eVis.visit(ctx.expr()));
         }
 
         @Override
-        public Stmt visitAssignBool(ParseRules.AssignBoolContext ctx) {
-            return new Stmt.Assign(ctx.ID().getText(), eVis.visit(ctx.boolEx()));
+        public Stmt visitIDStat(ParseRules.IDStatContext ctx) {
+            if (!ctx.ID(0).getText().equals(ctx.ID(1).getText())) {
+                return Errors.error(String.format("ID assignment mismatch: '%s' and '%s'",
+                            ctx.ID(0).getText(), ctx.ID(1).getText()));
+            }
+            else return new Stmt.Assign(ctx.ID(0).getText(), eVis.visit(ctx.expr()));
         }
 
         @Override
-        public Stmt visitPrintStr(ParseRules.PrintStrContext ctx) {
-            return new Stmt.Print(eVis.visit(ctx.strEx()));
-        }
-
-        @Override
-        public Stmt visitPrintBool(ParseRules.PrintBoolContext ctx) {
-            return new Stmt.Print(eVis.visit(ctx.boolEx()));
-        }
-
-        @Override
-        public Stmt visitIfElse(ParseRules.IfElseContext ctx) {
+        public Stmt visitIFStat(ParseRules.IFStatContext ctx) {
             return new Stmt.IfElse(
-                eVis.visit(ctx.boolEx()),
-                stlVis.visit(ctx.stmtList(0)),
-                stlVis.visit(ctx.stmtList(1)));
+                eVis.visit(ctx.expr()),
+                stlVis.visit(ctx.bracket()),
+                new Stmt.Block(List.of()));
         }
 
         @Override
-        public Stmt visitWhileLoop(ParseRules.WhileLoopContext ctx) {
+        public Stmt visitWHILEStat(ParseRules.WHILEStatContext ctx) {
             return new Stmt.While(
-                eVis.visit(ctx.boolEx()),
-                stlVis.visit(ctx.stmtList()));
+                eVis.visit(ctx.expr()),
+                stlVis.visit(ctx.bracket()));
         }
-
     }
 
     private class ExprVisitor extends Visitor<Expr> {
         @Override
-        public Expr visitStrIdentity(ParseRules.StrIdentityContext ctx) {
-            return visit(ctx.strEx());
-        }
-
-        @Override
-        public Expr visitInput(ParseRules.InputContext ctx) {
-            return new Expr.Input();
-        }
-
-        @Override
-        public Expr visitReverse(ParseRules.ReverseContext ctx) {
-            return new Expr.Reverse(visit(ctx.strEx()));
-        }
-
-        @Override
-        public Expr visitConcat(ParseRules.ConcatContext ctx) {
-            return new Expr.Concat(
-                visit(ctx.strEx(0)),
-                visit(ctx.strEx(1)));
-        }
-
-        @Override
-        public Expr visitStrLit(ParseRules.StrLitContext ctx) {
+        public Expr visitLitExpr(ParseRules.LitExprContext ctx) {
             StringBuilder sb = new StringBuilder();
-            String raw = ctx.STR().getText();
+            String raw = ctx.LIT().getText();
             for (int i = 1; i < raw.length()-1; ++i) {
                 sb.append(raw.charAt(i));
             }
@@ -126,57 +111,63 @@ public class ASTGen {
         }
 
         @Override
-        public Expr visitStrVar(ParseRules.StrVarContext ctx) {
+        public Expr visitInputExpr(ParseRules.InputExprContext ctx) {
+            return new Expr.Input();
+        }
+
+        @Override
+        public Expr visitRevExpr(ParseRules.RevExprContext ctx) {
+            return new Expr.Reverse(visit(ctx.expr()));
+        }
+
+        @Override
+        public Expr visitIDExpr(ParseRules.IDExprContext ctx) {
             return new Expr.Var(ctx.ID().getText());
         }
 
         @Override
-        public Expr visitAnd(ParseRules.AndContext ctx) {
-            return new Expr.And(
-                visit(ctx.boolEx(0)),
-                visit(ctx.boolEx(1)));
+        public Expr visitBoolLitExpr(ParseRules.BoolLitExprContext ctx) {
+            return new Expr.BoolLit(ctx.BOOL().getText().equals("Cooked"));
         }
 
         @Override
-        public Expr visitOr(ParseRules.OrContext ctx) {
-            return new Expr.Or(
-                visit(ctx.boolEx(0)),
-                visit(ctx.boolEx(1)));
+        public Expr visitConcatExpr(ParseRules.ConcatExprContext ctx) {
+            return new Expr.Concat(
+                visit(ctx.expr(0)),
+                visit(ctx.expr(1)));
         }
 
         @Override
-        public Expr visitNot(ParseRules.NotContext ctx) {
-            return new Expr.Not(
-                visit(ctx.boolEx()));
+        public Expr visitParenExpr(ParseRules.ParenExprContext ctx) {
+            return visit(ctx.expr());
         }
 
         @Override
-        public Expr visitContains(ParseRules.ContainsContext ctx) {
-            return new Expr.Contains(
-                visit(ctx.strEx(0)),
-                visit(ctx.strEx(1)));
+        public Expr visitNotExpr(ParseRules.NotExprContext ctx) {
+            return new Expr.Not(visit(ctx.expr()));
         }
 
         @Override
-        public Expr visitLessThan(ParseRules.LessThanContext ctx) {
-            return new Expr.StrLess(
-                visit(ctx.strEx(0)),
-                visit(ctx.strEx(1)));
-        }
-
-        @Override
-        public Expr visitBoolVar(ParseRules.BoolVarContext ctx) {
-            return new Expr.Var(ctx.ID().getText());
-        }
-
-        @Override
-        public Expr visitBoolLit(ParseRules.BoolLitContext ctx) {
-            return new Expr.BoolLit(ctx.BOOL().getText().equals("T"));
-        }
-
-        @Override
-        public Expr visitBoolIdentity(ParseRules.BoolIdentityContext ctx) {
-            return visit(ctx.boolEx());
+        public Expr visitOpExpr(ParseRules.OpExprContext ctx) {
+            Expr left = visit(ctx.expr(0));
+            Expr right = visit(ctx.expr(1));
+            String op = ctx.OP().getText();
+            if (op.equals("<")) {
+                return new Expr.StrLess(left, right);
+            }
+            else if (op.equals(">")) {
+                return new Expr.StrLess(right, left);
+            }
+            else if (op.equals("?")) {
+                return new Expr.Contains(left, right);
+            }
+            else if (op.equals("&")) {
+                return new Expr.And(left, right);
+            }
+            else if (op.equals("|")) {
+                return new Expr.Or(left, right);
+            }
+            else throw new AssertionError("illegal op; should be unreachable");
         }
     }
 

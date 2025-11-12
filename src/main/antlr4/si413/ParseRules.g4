@@ -1,77 +1,53 @@
-// Simple Grammer
 parser grammar ParseRules;
 
-tokens { ASSIGN, PRINT, TYPESTR, TYPEBOOL, TYPEVOID, TYPEFUNC, DEF, RETURN, WHILE, IF, CONCAT, REV, IN, CON, LT, AND, OR, NOT, OPENEX, CLOSEX, BOOL, STR, ID }
+// grammar for Winner Winner Chicken Dinner Language
+tokens {IF,RETURN, CONCAT, WHILE, FUNCTION, COMMA, LARROW, RARROW, LPREN, RPREN, LBRACK, RBRACK, NOT, OP, BOOL, PRINT, INPUT, REV, LIT, ID, IGNORE}
 
 prog
-  : stmtList EOF #RegProg
+  : stat prog #RegularProg
+  | EOF #EmptyProg
   ;
 
-stmtList
-  : stmt stmtList #RegStmtList
-  |		  #EmptyStmt
+stat
+  : PRINT expr PRINT #PrintStat
+  | ID LARROW expr RARROW ID #IDStat
+  | IF LPREN expr RPREN bracket #IFStat
+  | WHILE LPREN expr RPREN bracket #WHILEStat
+  | FUNCTION ID LPREN arguments RPREN bracket #FUNCStat
+  | FUNCTION ID LPREN RPREN bracket #FUNCVOIDStat
+  | ID LPREN RPREN #FUNCcallVoidStat
+  | ID LPREN arguments RPREN #FUNCcallStat
+  | RETURN expr #ReturnStat
   ;
 
-stmt
-  : ASSIGN OPENEX TYPESTR ID strEx CLOSEX #AssignStr
-  | ASSIGN OPENEX TYPEBOOL ID boolEx CLOSEX #AssignBool
-  | ASSIGN OPENEX TYPEFUNC ID funcEx CLOSEX #AssignFun
-  | PRINT OPENEX TYPESTR strEx CLOSEX #PrintStr
-  | PRINT OPENEX TYPEBOOL boolEx CLOSEX #PrintBool
-  | IF OPENEX boolEx OPENEX stmtList CLOSEX OPENEX stmtList CLOSEX CLOSEX #IfElse
-  | WHILE OPENEX boolEx stmtList CLOSEX #WhileLoop
-  | DEF TYPESTR ID OPENEX paramList CLOSEX OPENEX stmtList RETURN strEx CLOSEX #DefStrFun
-  | DEF TYPEBOOL ID OPENEX paramList CLOSEX OPENEX stmtList RETURN boolEx CLOSEX #DefBoolFun
-  | DEF TYPEVOID ID OPENEX paramList CLOSEX OPENEX stmtList CLOSEX #DefVoidFun
-  | DEF TYPEFUNC ID OPENEX paramList CLOSEX OPENEX stmtList RETURN funcEx CLOSEX #DefFunFun
-  | funcEx OPENEX argList CLOSEX #VoidFunCall
+arguments
+  : ID argumentsRepeat #ArgArg
   ;
 
-paramList
-  : param paramList #RegParam
-  |                 #EmptyParam
+argumentsRepeat
+  : COMMA ID argumentsRepeat #ArgRepeat
+  | #Emptyargument
   ;
 
-param
-  : TYPEBOOL ID #BoolParam
-  | TYPESTR ID #StrParam
-  | TYPEFUNC ID #FunParam
+bracket
+  : LBRACK inner RBRACK #LRBracket
   ;
 
-argList
-  : arg argList #RegArg
-  |		#EmptyArg
+inner
+  : stat inner #InnerInner
+  | #EmptyInner
   ;
 
-arg
-  : TYPESTR strEx #StrArg
-  | TYPEBOOL boolEx #BoolArg
-  | TYPEFUNC funcEx #FunArg
-  ;
-
-strEx
-  : OPENEX strEx CLOSEX #StrIdentity
-  | IN OPENEX CLOSEX #Input
-  | REV OPENEX strEx CLOSEX #Reverse
-  | CONCAT OPENEX strEx strEx CLOSEX #Concat
-  | STR #StrLit
-  | ID #StrVar
-  | funcEx OPENEX argList CLOSEX #StrFunCall
-  ;
-
-boolEx
-  : AND OPENEX boolEx boolEx CLOSEX #And
-  | OR OPENEX boolEx boolEx CLOSEX #Or
-  | NOT OPENEX boolEx CLOSEX #Not
-  | CON OPENEX strEx strEx CLOSEX #Contains
-  | LT OPENEX strEx strEx CLOSEX #LessThan
-  | ID #BoolVar
-  | BOOL #BoolLit
-  | OPENEX boolEx CLOSEX #BoolIdentity
-  | funcEx OPENEX argList CLOSEX #BoolFunCall
-  ;
-
-funcEx
-  : ID #FuncName
-  | funcEx OPENEX argList CLOSEX #FunFunCall
+expr
+  : LIT #LitExpr
+  | INPUT #InputExpr
+  | REV LARROW expr RARROW REV #RevExpr
+  | ID #IDExpr
+  | BOOL #BoolLitExpr
+  | expr CONCAT expr #ConcatExpr
+  | ID LPREN arguments RPREN  #IDLRExpr
+  | ID LPREN RPREN  #IDLRVoidExpr
+  | LPREN expr RPREN #ParenExpr
+  | NOT expr #NotExpr
+  | expr OP expr #OpExpr
   ;

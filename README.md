@@ -1,11 +1,10 @@
-# Lab 4.2 starter code for Simple language
+# Lab 4.2 starter code for ddcw (Dinner Dinner Chicken Winner)
 
-This language was created by Tate Murphy, who writes:
+This language was created by Richard Kang, who writes:
 
-> In lab 2, before we had seen Scheme, I had the idea of making a
-> function-based language. Although I didn't  understand what that fully
-> entailed, I thought I could simplify writing a language by making everything
-> "like a function".
+> Thanksgiving is coming up and I wanted to make a thankgiving themed
+> language. It is cool because who doesn't like Thanksgiving?  A bawk is
+> used for print because that is loud.
 
 ## Example programs and test files
 

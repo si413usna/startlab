@@ -22,8 +22,8 @@ f Turkey(yesno){
 }
 
 bawk "Input True or False" bawk
-name -> stuffing <- name
+name -> stuffing < "U"<- name
 Turkey(name)
 
-name2 -> stuffing <- name2
+name2 -> stuffing < "U" <- name2
 Turkey(name2)

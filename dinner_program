@@ -30,9 +30,10 @@ table2 -> table_tracker(table2param) <- table2
 done -> Uncooked <- done
 t2got -> "nothing" <- t2got
 w (!done){
-bawk "What do you want" bawk
+bawk "What do you want?" bawk
 food -> stuffing <- food
-result -> string_eq(food, done) <- result
+donestr -> "done" <- donestr
+result -> string_eq(food, donestr) <- result
 carve (result) {
 done -> Cooked <- done
 }
@@ -44,4 +45,4 @@ table1param2 -> "Tteokbokki" <- table1param2
 table1(table1param2)
 total1param -> "Samgyeopsal" <- total1param
 total1 -> table1(total1param) <- total1
-bawk "We got " + total1 + " and you got " + table2_total bawk
+bawk "We got " + total1 + " and you got " + t2got bawk

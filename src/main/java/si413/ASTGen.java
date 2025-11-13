@@ -18,8 +18,7 @@ public class ASTGen {
      * This is the main external interface for the ASTGen class.
      */
     public static Stmt.Block gen(ParseRules.ProgContext parseTree) {
-        //return new ASTGen().stlVis.visit(parseTree);
-        return null;
+        return new ASTGen().stlVis.visit(parseTree);
     }
 
     /** Use this as the subclass for the visitor classes.

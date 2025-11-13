@@ -16,7 +16,7 @@ define function table_tracker(string name)
                 )
                 send total
         )
-  send order
+        send order
 )
 
 define bool string_eq(string s1 string s2)
@@ -38,11 +38,11 @@ loop ( ~(done)
                                 assign (bool done T)
                         )
                         (
-                                assign (function t2got table2(string food))
+                                assign (string t2got table2(string food))
                         )
                 )
 )
 table1(string [Tteokbokki])
-assign (function total1 table1(string [Samgyeopsal]))
+assign (string total1 table1(string [Samgyeopsal]))
 
 print (string concat ([We got ] concat (total1 concat ([ and you got ] t2got))))

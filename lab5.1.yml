@@ -11,11 +11,6 @@ language_name: easyas
 # just enter a or b
 option: a
 
-# fill in with your equivalent to the sqrt python program
-sqrt_program: |
-    BLAH BLAH BLAH BLAH
-    BLAH BLAH BLAH BLAH
-
 # leave this as NONE for your initial submission
 changes_on_resubmit: |
     NONE
@@ -27,3 +22,9 @@ collaboration: |
 # something else your instructor should know?
 any_other_comments_for_me: |
     NONE
+
+sqrt_program: |
+    This program is only for the "numbers"
+    option (B), so just leave it here exactly
+    like this and it will be ignored when
+    you submit.

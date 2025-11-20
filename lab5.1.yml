@@ -1,4 +1,4 @@
-# SI413 Lab 4.2: Interpreter for functional language
+# SI413 Lab 5.1: Numbers and built-in functions
 
 your_name: BLAH BLAH
 
@@ -6,7 +6,15 @@ your_alpha: BLAH
 
 used_ai: Y # remember to turn in an aichat.md file as well
 
-language_name: Simple
+language_name: simple
+
+# just enter a or b
+option: b
+
+# fill in with your equivalent to the sqrt python program
+sqrt_program: |
+    BLAH BLAH BLAH BLAH
+    BLAH BLAH BLAH BLAH
 
 # leave this as NONE for your initial submission
 changes_on_resubmit: |

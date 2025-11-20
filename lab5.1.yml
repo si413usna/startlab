@@ -9,7 +9,7 @@ used_ai: Y # remember to turn in an aichat.md file as well
 language_name: easyas
 
 # just enter a or b
-option: b
+option: a
 
 # fill in with your equivalent to the sqrt python program
 sqrt_program: |

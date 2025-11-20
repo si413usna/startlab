@@ -1,0 +1,17 @@
+@ Read and plus program in EasyAs @
+
+display.S[Enter a filename]
+store fname -> ask.S
+store contents -> ##read(fname)
+
+store as -> S[A]
+store acount -> S[0]
+store pow -> S[1]
+w contents ^ as {
+  store as -> as + S[A]
+  store acount -> ##plus(acount, S[1])
+  store pow -> ##plus(pow,pow)
+}
+
+display.S[There are ] + acount + S[ As]
+display.S[2^]+acount+S[ = ]+pow

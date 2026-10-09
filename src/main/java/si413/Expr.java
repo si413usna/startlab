@@ -8,24 +8,24 @@ package si413;
  */
 public interface Expr<T> {
     /** Evaluates this AST node and returns the result.
-     * The Interpreter instance interp is needed to pass around
+     * The RunState instance state is needed to pass around
      * any shared state of the interpreter, such as a symbol table.
      */
-    T eval(Interpreter interp);
+    T eval(RunState state);
 
     // ******* AST node types for expressions that return a String ******** //
 
     record StringLit(String value) implements Expr<String> {
         @Override
-        public String eval(Interpreter interp) {
+        public String eval(RunState state) {
             return value;
         }
     }
 
     record StrVar(String name) implements Expr<String> {
         @Override
-        public String eval(Interpreter interp) {
-            String val = interp.getStringVars().get(name);
+        public String eval(RunState state) {
+            String val = state.strVars().get(name);
             if (val == null)
                 return Errors.error(String.format("undefined string variable %s", name));
             else return val;
@@ -34,25 +34,43 @@ public interface Expr<T> {
 
     record Concat(Expr<String> lhs, Expr<String> rhs) implements Expr<String> {
         @Override
-        public String eval(Interpreter interp) {
-            String lval = lhs.eval(interp);
-            String rval = rhs.eval(interp);
+        public String eval(RunState state) {
+            String lval = lhs.eval(state);
+            String rval = rhs.eval(state);
             return lval + rval;
         }
     }
 
     record Reverse(Expr<String> child) implements Expr<String> {
         @Override
-        public String eval(Interpreter interp) {
-            String childVal = child.eval(interp);
+        public String eval(RunState state) {
+            String childVal = child.eval(state);
             return new StringBuilder(childVal).reverse().toString();
+        }
+    }
+
+    record Chop(Expr<String> lhs, Expr<String> rhs) implements Expr<String> {
+        @Override
+        public String eval(RunState state) {
+            String lval = lhs.eval(state);
+            String rval = rhs.eval(state);
+            int found = lval.indexOf(rval);
+            if (found < 0) return lval;
+            else return lval.substring(0, found);
+        }
+    }
+
+    record BoolToString(Expr<Boolean> child) implements Expr<String> {
+        @Override
+        public String eval(RunState state) {
+            return child.eval(state) ? "yes" : "no";
         }
     }
 
     record Input() implements Expr<String> {
         @Override
-        public String eval(Interpreter interp) {
-            return interp.readInputLine();
+        public String eval(RunState state) {
+            return state.stdin().nextLine();
         }
     }
 
@@ -60,15 +78,15 @@ public interface Expr<T> {
 
     record BoolLit(Boolean value) implements Expr<Boolean> {
         @Override
-        public Boolean eval(Interpreter interp) {
+        public Boolean eval(RunState state) {
             return value;
         }
     }
 
     record BoolVar(String name) implements Expr<Boolean> {
         @Override
-        public Boolean eval(Interpreter interp) {
-            Boolean val = interp.getBoolVars().get(name);
+        public Boolean eval(RunState state) {
+            Boolean val = state.boolVars().get(name);
             if (val == null)
                 return Errors.error(String.format("undefined bool variable %s", name));
             else return val;
@@ -77,40 +95,24 @@ public interface Expr<T> {
 
     record StrLess(Expr<String> lhs, Expr<String> rhs) implements Expr<Boolean> {
         @Override
-        public Boolean eval(Interpreter interp) {
-            String lval = lhs.eval(interp);
-            String rval = rhs.eval(interp);
+        public Boolean eval(RunState state) {
+            String lval = lhs.eval(state);
+            String rval = rhs.eval(state);
             return lval.compareTo(rval) < 0;
-        }
-    }
-
-    record Contains(Expr<String> lhs, Expr<String> rhs) implements Expr<Boolean> {
-        @Override
-        public Boolean eval(Interpreter interp) {
-            String lval = lhs.eval(interp);
-            String rval = rhs.eval(interp);
-            return lval.contains(rval);
-        }
-    }
-
-    record And(Expr<Boolean> lhs, Expr<Boolean> rhs) implements Expr<Boolean> {
-        @Override
-        public Boolean eval(Interpreter interp) {
-            return lhs.eval(interp) && rhs.eval(interp);
         }
     }
 
     record Or(Expr<Boolean> lhs, Expr<Boolean> rhs) implements Expr<Boolean> {
         @Override
-        public Boolean eval(Interpreter interp) {
-            return lhs.eval(interp) || rhs.eval(interp);
+        public Boolean eval(RunState state) {
+            return lhs.eval(state) || rhs.eval(state);
         }
     }
 
     record Not(Expr<Boolean> child) implements Expr<Boolean> {
         @Override
-        public Boolean eval(Interpreter interp) {
-            return !child.eval(interp);
+        public Boolean eval(RunState state) {
+            return !child.eval(state);
         }
     }
 }

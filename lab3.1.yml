@@ -40,8 +40,8 @@ example_output_2: |
     BLAH BLAH
 
 
-# your implementation of the "dance" program in your language
-dance_program: |
+# your implementation of the test program in your language
+testprog: |
     BLAH BLAH
     BLAH BLAH
 

@@ -7,77 +7,69 @@ import java.util.List;
  */
 public interface Stmt {
     /** Executes this AST node.
-     * The Interpreter instance interp is needed to pass around
+     * The Interpreter instance state is needed to pass around
      * any shared state of the interpreter, such as a symbol table.
      */
-    void exec(Interpreter interp);
+    void exec(RunState state);
 
     // ******** AST Node types for statements ******** //
 
     record Block(List<Stmt> children) implements Stmt {
         @Override
-        public void exec(Interpreter interp) {
+        public void exec(RunState state) {
             for (Stmt child : children) {
-                child.exec(interp);
+                child.exec(state);
             }
         }
     }
 
     record ExprStmt(Expr<?> child) implements Stmt {
         @Override
-        public void exec(Interpreter interp) {
-            child.eval(interp);
+        public void exec(RunState state) {
+            child.eval(state);
         }
     }
 
     record AssignString(String name, Expr<String> child) implements Stmt {
         @Override
-        public void exec(Interpreter interp) {
-            String val = child.eval(interp);
-            interp.getStringVars().put(name, val);
+        public void exec(RunState state) {
+            String val = child.eval(state);
+            state.strVars().put(name, val);
         }
     }
 
     record AssignBool(String name, Expr<Boolean> child) implements Stmt {
         @Override
-        public void exec(Interpreter interp) {
-            boolean val = child.eval(interp);
-            interp.getBoolVars().put(name, val);
+        public void exec(RunState state) {
+            boolean val = child.eval(state);
+            state.boolVars().put(name, val);
         }
     }
 
-    record PrintString(Expr<String> child) implements Stmt {
+    record Print(Expr<String> child) implements Stmt {
         @Override
-        public void exec(Interpreter interp) {
-            System.out.println(child.eval(interp));
-        }
-    }
-
-    record PrintBool(Expr<Boolean> child) implements Stmt {
-        @Override
-        public void exec(Interpreter interp) {
-            if (child.eval(interp)) System.out.println("True");
-            else System.out.println("False");
+        public void exec(RunState state) {
+            System.out.println(child.eval(state));
         }
     }
 
     record IfElse(Expr<Boolean> condition, Stmt ifBody, Stmt elseBody) implements Stmt {
         @Override
-        public void exec(Interpreter interp) {
-            if (condition.eval(interp)) {
-                ifBody.exec(interp);
+        public void exec(RunState state) {
+            if (condition.eval(state)) {
+                ifBody.exec(state);
             }
-            else {
-                elseBody.exec(interp);
+            else if (elseBody != null) {
+                elseBody.exec(state);
             }
         }
     }
 
     record While(Expr<Boolean> condition, Stmt body) implements Stmt {
         @Override
-        public void exec(Interpreter interp) {
-            while (condition.eval(interp)) {
-                body.exec(interp);
+        public void exec(RunState state) {
+            while (condition.eval(state)) {
+                body.exec(state);
             }
         }
     }

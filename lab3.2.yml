@@ -20,8 +20,11 @@ collaboration: |
 any_other_comments_for_me: |
     NONE
 
+language_name: BLAH
+
 # feel free to copy these example programs and inputs/outputs
 # from the previous lab
+
 example_program: |
     BLAH BLAH
     BLAH BLAH
@@ -38,6 +41,6 @@ example_input_2: |
 example_output_2: |
     BLAH BLAH
 
-dance_program: |
+testprog: |
     BLAH BLAH
     BLAH BLAH

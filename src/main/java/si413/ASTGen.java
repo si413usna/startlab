@@ -1,11 +1,9 @@
 package si413;
 
-import java.util.List;
-import java.util.ArrayList;
-
-// REPLACE THIS ENTIRE FILE WITH YOUR ASTGen.java
-// FROM THE PREVIOUS LAB!
+// TODO replace this with your working ASTGen from the previous lab
 
 public class ASTGen {
-    public static Stmt.Block gen(ParseRules.ProgContext ptreeRoot) { return null; }
+    public static Stmt gen(Object parseTree) {
+        return Errors.error("YOU NEED TO COPY YOUR ASTGen.java FROM THE PREVIOUS LAB!");
+    }
 }

@@ -1,1 +1,1 @@
-# delete this file and replace it with your own token spec!
+# TODO ERASE THIS AND COPY tokenSpec.txt FROM THE PREVIOUS LAB!

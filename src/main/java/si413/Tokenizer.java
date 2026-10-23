@@ -1,6 +1,6 @@
 package si413;
 
-/** This file contains a generic tokenizer based on the tokenSpec.txt file.
+/* This file contains a generic tokenizer based on the tokenSpec.txt file.
  * You should NOT need to change anything here - just change the
  * tokenSpec.txt file for your language as needed.
  * This is version 2.0 of the tokenizer. It reads in the entire input into
@@ -63,8 +63,56 @@ public class Tokenizer {
     private static Pattern specFileLine = Pattern.compile(
         "^\\s*(?:#.*|(?:(?<name>[A-Z]\\w*)|ignore)\\s*:\\s*(?<pat>.*?)\\s*)$");
 
+    private static class NamedTokens {
+        private Map<String, Integer> name2type = new HashMap<>();
+        private Map<Integer, String> type2name = new HashMap<>();
+        private int highestType = 0;
+
+        public NamedTokens() {
+            add("EOF", Token.EOF);
+        }
+
+        public void add(String name, int type) {
+            if (name2type.containsKey(name) || type2name.containsKey(type)) {
+                throw new IllegalArgumentException(String.format(
+                            "token name '%s' or type %d duplicated", name, type));
+            }
+            name2type.put(name, type);
+            type2name.put(type, name);
+            if (type > highestType) highestType = type;
+        }
+
+        public int size() {
+            return name2type.size();
+        }
+
+        public int lookup(String name, boolean addIfMissing) {
+            Integer type = name2type.get(name);
+            if (type == null) {
+                if (addIfMissing) {
+                    type = highestType + 1;
+                    add(name, type);
+                }
+                else return Errors.error(String.format("Token %s not found in vocab", name));
+            }
+            return type;
+        }
+
+        public int lookup(String name) {
+            return lookup(name, false);
+        }
+
+        public String lookup(int type) {
+            String name = type2name.get(type);
+            if (name == null)
+                return Errors.error(String.format("No token with type %d", type));
+            else return name;
+        }
+    }
+
     private List<TokenSpec> specs;
     private Set<Integer> initialDisabledTokens;
+    private NamedTokens tokNames = new NamedTokens();
 
     /** Loads a tokenizer from the given input spec file and vocabulary of token types.
      * No tokens will be disabled by default.
@@ -82,10 +130,12 @@ public class Tokenizer {
         this.initialDisabledTokens = initialDisabledTokens;
 
         // extract token types from parser vocabulary
-        Map<String, Integer> tokenTypes = new HashMap<>();
-        for (int type = 0; type <= vocab.getMaxTokenType(); ++type) {
-            String name = vocab.getSymbolicName(type);
-            if (name != null) tokenTypes.put(name, type);
+        boolean hasVocab = (vocab != null);
+        if (hasVocab) {
+            for (int type = 0; type <= vocab.getMaxTokenType(); ++type) {
+                String name = vocab.getSymbolicName(type);
+                if (name != null) tokNames.add(name, type);
+            }
         }
 
         // read specs from spec file
@@ -104,14 +154,16 @@ public class Tokenizer {
                 if (tokName == null) {
                     tokType = IGNORE_TYPE;
                 } else {
-                    tokType = tokenTypes.getOrDefault(tokName, Token.INVALID_TYPE);
-                    if (tokType == Token.INVALID_TYPE) {
-                        Errors.error(String.format("Token %s not found in vocab", tokName));
-                    }
+                    tokType = tokNames.lookup(tokName, !hasVocab);
                 }
                 specs.add(new TokenSpec(tokType, Pattern.compile(pat, Pattern.MULTILINE)));
             }
         }
+    }
+
+    /** Returns the name associated to the given token type. */
+    public String getTokName(int type) {
+        return tokNames.lookup(type);
     }
 
     /** Produces a stream of tokens from the given input file. */
@@ -155,7 +207,7 @@ public class Tokenizer {
                 return tokenFactory.create(
                     sourcePair,
                     Token.EOF,
-                    null,
+                    "",
                     Token.DEFAULT_CHANNEL,
                     0,
                     0,

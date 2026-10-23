@@ -20,6 +20,16 @@ char* concat_strings(const char* lhs, const char* rhs) {
   return result;
 }
 
+char* chop_string(const char* lhs, const char* rhs) {
+  char* found = strstr(lhs, rhs);
+  if (found == NULL) return strdup(lhs);
+  else return strndup(lhs, found-lhs);
+}
+
+char* bool_to_string(bool x) {
+  return x ? "yes" : "no";
+}
+
 char* read_line() {
   char* result = NULL;
   size_t size;
@@ -33,15 +43,13 @@ char* read_line() {
   return result;
 }
 
-void print_bool(bool b) {
-  if (b) puts("True");
-  else puts("False");
-}
-
 bool string_less(const char* lhs, const char* rhs) {
   return strcmp(lhs, rhs) < 0;
 }
 
-bool string_contains(const char* lhs, const char* rhs) {
-  return (strstr(lhs, rhs) != NULL);
+// use this function for any standard library calls you need
+// that don't appear elsewhere.
+__attribute__((optnone))
+void dummy() {
+  puts("");
 }

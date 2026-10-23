@@ -196,8 +196,8 @@ public interface Expr<T> {
         public String compile(CompileState cstate) {
             String creg = child.compile(cstate);
             String res = cstate.freshReg();
-            // note, LLVM has no "not" command in 3AC, instead we xor the value with itself
-            cstate.out().format("  %s = xor i1 %s, %s\n", res, creg, creg);
+            // note, LLVM has no "not" command in 3AC, instead we xor the value with 1
+            cstate.out().format("  %s = xor i1 %s, 1\n", res, creg);
             return res;
         }
     }

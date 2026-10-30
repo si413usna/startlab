@@ -1,4 +1,4 @@
-# SI413 Lab 4.1: Spec and interpreter for iffy language
+# SI413 Lab 4.1: Syntax for functional language
 
 your_name: BLAH BLAH
 
@@ -22,11 +22,6 @@ language_explanation: |
     BLAH BLAH
     BLAH BLAH
 
-# this is the example program that you make up
-example_program: |
-    BLAH BLAH
-    BLAH BLAH
-
 example_input_1: |
     BLAH BLAH
 
@@ -37,12 +32,6 @@ example_input_2: |
     BLAH BLAH
 
 example_output_2: |
-    BLAH BLAH
-
-
-# your implementation of the "dinner" program in your language
-dinner_program: |
-    BLAH BLAH
     BLAH BLAH
 
 

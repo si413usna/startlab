@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+srcdir="$(dirname "$0")"
+
+jarfile="$srcdir/ptree.jar"
+
+if [[ ! -s $jarfile ]]; then
+  echo "Downloading ptree.jar..."
+  curl -fsSL 'https://github.com/si413usna/ptree/releases/download/v1.0/ptree.jar' -o "$jarfile"
+fi
+
+java -jar "$jarfile" "$@"

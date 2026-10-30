@@ -1,5 +1,5 @@
 // FILL IN THE GRAMMAR FOR YOUR LANGAUGE HERE
-parser grammar ParseRules;
+parser grammar Grammar;
 
 tokens { }
 

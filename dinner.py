@@ -18,7 +18,7 @@ def table_tracker(name):
     return order
 
 def string_eq(s1, s2):
-    return not s1 < s2 and not s2 < s1
+    return not (s1 < s2 or s2 < s1)
 
 table1 = table_tracker("CS profs")
 table1("Kimchi")

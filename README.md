@@ -36,7 +36,7 @@ important for *this* lab, not previous labs.
 
 ## Example programs
 
-The [dinner\_program](dinner_program) is an implementation in this
+The [dinner\_prog](dinner_prog) is an implementation in this
 language of the example program from last lab:
 
 ```python

@@ -1,0 +1,32 @@
+([Excrete] "Enter a word")
+([Refrigerate] word; [Eat])
+
+([Refrigerate] revWord; ([Vomit] word))
+([Refrigerate] isPalindrome; !(([Compare] word; revWord) ^ ([Compare] revWord; word)))
+
+([Excrete] ([Cook] "Is '"; ([Cook] word; "' a palindrome?")))
+([Excrete] ([Harvest] isPalindrome))
+
+([Excrete] "Enter some colon-separated words")
+([Refrigerate] csvLine; [Eat])
+([Refrigerate] sep; ":")
+([Refrigerate] remains; csvLine)
+
+([Excrete] "Tokens:")
+([Scotty] ([Compare] ""; remains)
+    ([Refrigerate] token; ([Chop] remains; sep))
+    ([Excrete] token)
+
+    [Speak] if token == remains, then this was the last word
+    ([Nausea] (([Compare] token; remains) ^ ([Compare] remains; token))
+        [Hurl]
+            [Speak] Strip 'token' and 'sep' from the front of 'remains' using reverse and chop
+            ([Refrigerate] revRemains; ([Vomit] remains))
+            ([Refrigerate] revPrefix; ([Vomit] ([Cook] token; sep)))
+            ([Refrigerate] revRest; ([Chop] revRemains; revPrefix))
+            ([Refrigerate] remains; ([Vomit] revRest))
+        [recover]
+            [Speak] Clear remains to terminate the loop
+            ([Refrigerate] remains; "")
+    )
+[Beam Me Up])

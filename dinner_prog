@@ -1,0 +1,46 @@
+([Recipe] tableTracker(name) :
+    ([Refrigerate] first; TRUE)
+    ([Refrigerate] total; "")
+
+    ([Recipe] order(food) :
+        ([Excrete] ([Cook] "Table "; ([Cook] name; ([Cook] " ordering "; food))))
+        ([Nausea] (first)
+            [Hurl]
+                ([Refrigerate] first; FALSE)
+                ([Refrigerate] total; food)
+            [recover]
+                ([Refrigerate] total; ([Cook] total; ([Cook] ", "; food)))
+        )
+        ([Present] total)
+    )
+    ([Present] order)
+)
+
+
+([Recipe] stringEq(s1; s2) :
+    ([Present] !(([Compare] s1; s2) ^ ([Compare] s2; s1)))
+)
+
+
+([Refrigerate] table1; ([tableTracker]("CS profs")))
+([table1]("Kimchi"))
+
+([Excrete] "Your name?")
+([Refrigerate] table2; ([tableTracker]([Eat])))
+([Refrigerate] done; FALSE)
+([Refrigerate] t2got; "nothing")
+
+([Scotty] (!done)
+    ([Excrete] "What do you want?")
+    ([Refrigerate] food; [Eat])
+    ([Nausea] ([stringEq](food; "done"))
+        [Hurl]
+            ([Refrigerate] done; TRUE)
+        [recover]
+            ([Refrigerate] t2got; ([table2](food)))
+    )
+[Beam Me Up])
+
+([table1]("Tteokbokki"))
+([Refrigerate] total1; ([table1]("Samgyeopsal")))
+([Excrete] ([Cook] "We got "; ([Cook] total1; ([Cook] " and you got "; t2got))))

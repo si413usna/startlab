@@ -1,0 +1,28 @@
+ignore: \[Speak\].*
+BOOLLIT: TRUE|FALSE
+RECIPE: \[Recipe\]
+PRESENT: \[Present\]
+NAUSEA: \[Nausea\]
+HURL: \[Hurl\]
+RECOVER: \[recover\]
+SCOTTY: \[Scotty\]
+BEAMMEUP: \[Beam Me Up\]
+ID: [a-z]+[A-Za-z0-9]*
+EXCRETE: \[Excrete\]
+VOMIT: \[Vomit\]
+REFRIGERATE: \[Refrigerate\]
+COMPARE: \[Compare\]
+HARVEST: \[Harvest\]
+CHOP: \[Chop\]
+COOK: \[Cook\]
+EAT: \[Eat\]
+NOT: !
+OR: \^
+LPAREN: \(
+RPAREN: \)
+SEMI: ;
+COLON: :
+LBRACKET: \[
+RBRACKET: \]
+STRLIT: "([^"\$]|\$["\$])*"
+ignore: [ \t\r\n]+

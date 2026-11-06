@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>si413</groupId>
+  <artifactId>lab</artifactId>
+  <version>4.2</version>
+
+  <name>lab</name>
+  <description>Lab implementation for SI413 at USNA.</description>
+  <url>http://roche.work/si413</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.13.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.13.1</version>
+        <executions>
+          <execution>
+            <id>antlr</id>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+            <configuration>
+              <visitor>true</visitor>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+	<artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <release>21</release>
+          <showDeprecation>true</showDeprecation>
+          <!--<failOnWarning>true</failOnWarning>-->
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+            <arg>-Xlint:-this-escape</arg>
+            <arg>-Xlint:-serial</arg>
+            <arg>-Xmaxerrs</arg>
+            <arg>5</arg>
+            <arg>-Xmaxwarns</arg>
+            <arg>5</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+	<artifactId>maven-clean-plugin</artifactId>
+	<version>3.3.1</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>

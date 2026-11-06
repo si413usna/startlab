@@ -1,0 +1,31 @@
+"Enter a word" ~> emit
+absorb @word
+
+@word.reverse ~> absorb @rev_word
+(@word { @rev_word || @rev_word { @word).invert ~> absorb @is_palindrome
+
+"Is '" ~> @word ~> "' a palindrome?" ~> emit
+@is_palindrome.revealBool ~> emit
+
+"Enter some colon-separated words" ~> emit
+absorb @csv_line
+":" ~> absorb @sep
+@csv_line ~> absorb @remains
+
+"Tokens:" ~> emit
+"" { @remains ~> orbit [
+    @remains.sever(@sep) ~> absorb @token
+    @token ~> emit
+
+    mute: if token == remains, then this was the last word
+    (@token { @remains || @remains { @token) ~> probe [
+        mute: Strip 'token' and 'sep' from the front of 'remains' using reverse and chop
+        @remains.reverse ~> absorb @rev_remains
+        (@token ~> @sep).reverse ~> absorb @rev_prefix
+        @rev_remains.sever(@rev_prefix) ~> absorb @rev_rest
+        @rev_rest.reverse ~> absorb @remains
+    ] otherwise [
+        mute: Clear remains to terminate the loop
+        "" ~> absorb @remains
+    ]
+]

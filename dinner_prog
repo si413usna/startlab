@@ -1,0 +1,48 @@
+forge @table_tracker(@name) [
+    light ~> absorb @first
+    "" ~> absorb @total
+
+    forge @order(@food) [
+        mute: no nonlocal needed, absorb updates @first and @total 
+        "Table " ~> @name ~> " ordering " ~> @food ~> emit
+
+        @first ~> probe [
+            dark ~> absorb @first
+            @food ~> absorb @total
+        ] otherwise [
+            @total ~> ", " ~> @food ~> absorb @total
+        ]
+
+        @total ~> eject
+    ]
+
+    @order ~> eject
+]
+
+forge @string_eq(@s1, @s2) [
+    (@s1 { @s2 || @s2 { @s1).invert ~> eject
+]
+
+@table_tracker("CS profs") ~> absorb @table1
+@table1("Kimchi")
+
+"Your name?" ~> emit
+absorb @guest
+@table_tracker(@guest) ~> absorb @table2
+
+dark ~> absorb @done
+"nothing" ~> absorb @t2got
+@done.invert ~> orbit [
+    "What do you want?" ~> emit
+    absorb @food
+    @string_eq(@food, "done") ~> probe [
+        light ~> absorb @done
+    ] otherwise [
+        @table2(@food) ~> absorb @t2got
+    ]
+]
+
+@table1("Tteokbokki")
+@table1("Samgyeopsal") ~> absorb @total1
+
+"We got " ~> @total1 ~> " and you got " ~> @t2got ~> emit

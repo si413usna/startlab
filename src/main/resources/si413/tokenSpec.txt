@@ -1,0 +1,27 @@
+# Tokens for Hibana
+ignore: ><(?:.|\n)*?><
+ignore: [ \t\r]+
+NEWLINE: \n
+REVR: \.revr
+CHOP: \.chop\.
+BLOOM: bloom
+HARVEST: harvest
+SEED: seed
+LIGHT: light
+DARK: dark
+OR: OR
+SPARK: spark
+EMBER: ember
+KINDLE: kindle
+SNUFF: snuff
+FORGE: forge
+FLARE: flare
+STRINGLIT: \[(?:[^\]~]|~.)*\]
+VAR: [a-zA-Z_][a-zA-Z0-9_]*
+ASSIGN: ,
+PLUS: \+
+LESSTHAN: <
+NOT: \*
+B2S: `
+LPAREN: \(
+RPAREN: \)

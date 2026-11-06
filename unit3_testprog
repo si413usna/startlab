@@ -1,0 +1,30 @@
+>< Test program from Lab 3.1, written in Hibana ><
+
+bloom [Enter a word]
+seed word, harvest
+
+seed rev_word, word.revr
+seed is_palindrome, *(word < rev_word OR rev_word < word)
+
+bloom [Is '] + word + [' a palindrome?]
+bloom `is_palindrome
+
+bloom [Enter some colon-separated words]
+seed csv_line, harvest
+seed sep, [:]
+seed remains, csv_line
+
+bloom [Tokens:]
+kindle [] < remains
+    seed token, remains.chop.sep
+    bloom token
+
+    spark token < remains OR remains < token
+        seed rev_remains, remains.revr
+        seed rev_prefix, (token + sep).revr
+        seed rev_rest, rev_remains.chop.rev_prefix
+        seed remains, rev_rest.revr
+    ember
+        seed remains, []
+    snuff
+snuff

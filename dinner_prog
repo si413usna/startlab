@@ -1,0 +1,51 @@
+>< Function that returns another function ><
+seed table_tracker, forge (name)
+    seed first, light
+    seed total, []
+
+    seed order, forge (food)
+        bloom [Table ] + name + [ ordering ] + food
+
+        spark first
+            seed first, dark
+            seed total, food
+        ember
+            seed total, total + [, ] + food
+        snuff
+
+        flare total
+    snuff
+
+    flare order
+snuff
+
+>< String helper ><
+seed string_eq, forge (s1, s2)
+    flare *(s1 < s2 OR s2 < s1)
+snuff
+
+>< Main ><
+seed table1, table_tracker([CS profs])
+table1([Kimchi])
+
+bloom [Your name?]
+seed table2, table_tracker(harvest)
+
+seed done, dark
+seed t2got, [nothing]
+
+kindle *done
+    bloom [What do you want?]
+    seed food, harvest
+
+    spark string_eq(food, [done])
+        seed done, light
+    ember
+        seed t2got, table2(food)
+    snuff
+snuff
+
+table1([Tteokbokki])
+seed total1, table1([Samgyeopsal])
+
+bloom [We got ] + total1 + [ and you got ] + t2got

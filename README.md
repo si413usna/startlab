@@ -1,4 +1,4 @@
-# Lab 4.2 starter code for Hibana
+# Lab 4.2 starter code for DIGEST
 
 This language was created by Sean Avilucea, who provided this
 explanation:

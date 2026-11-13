@@ -1,0 +1,20 @@
+mute: read and plus program in void
+
+"Enter a filename" ~> emit
+absorb @fname
+@read(@fname) ~> absorb @contents
+
+"0" ~> absorb @acount
+"1" ~> absorb @pow
+
+mute: this loop iteratively chops off the front of the file contents up to the first A
+@contents.sever("A") ~> absorb @prefix
+@prefix { @contents ~> orbit [
+    (@contents.reverse ~> "$$$").sever("A" ~> @prefix.reverse ~> "$$$").reverse ~> absorb @contents
+    @plus(@acount, "1") ~> absorb @acount
+    @plus(@pow, @pow) ~> absorb @pow
+    @contents.sever("A") ~> absorb @prefix
+]
+
+"File '" ~> @fname ~> "' has " ~> @acount ~> " As" ~> emit
+"2^" ~> @acount ~> " = " ~> @pow ~> emit

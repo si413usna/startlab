@@ -1,20 +1,20 @@
-mute: read and plus program in void
+>< read and plus program in Hibana ><
 
-"Enter a filename" ~> emit
-absorb @fname
-@read(@fname) ~> absorb @contents
+bloom [Enter a filename]
+seed fname, harvest
+seed contents, read(fname)
 
-"0" ~> absorb @acount
-"1" ~> absorb @pow
+seed acount, [0]
+seed pow, [1]
 
-mute: this loop iteratively chops off the front of the file contents up to the first A
-@contents.sever("A") ~> absorb @prefix
-@prefix { @contents ~> orbit [
-    (@contents.reverse ~> "$$$").sever("A" ~> @prefix.reverse ~> "$$$").reverse ~> absorb @contents
-    @plus(@acount, "1") ~> absorb @acount
-    @plus(@pow, @pow) ~> absorb @pow
-    @contents.sever("A") ~> absorb @prefix
-]
+>< this loop iteratively chops off the front of the file contents up to the first A ><
+seed prefix, contents.chop.[A]
+kindle prefix < contents
+    seed contents, ((contents.revr + [$$$]).chop.([A] + prefix.revr + [$$$])).revr
+    seed acount, plus(acount, [1])
+    seed pow, plus(pow, pow)
+    seed prefix, contents.chop.[A]
+snuff
 
-"File '" ~> @fname ~> "' has " ~> @acount ~> " As" ~> emit
-"2^" ~> @acount ~> " = " ~> @pow ~> emit
+bloom [File '] + fname + [' has ] + acount + [ As]
+bloom [2^] + acount + [ = ] + pow

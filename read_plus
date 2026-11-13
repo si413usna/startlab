@@ -1,20 +1,20 @@
-mute: read and plus program in void
+[Speak] read and plus program in DIGEST
 
-"Enter a filename" ~> emit
-absorb @fname
-@read(@fname) ~> absorb @contents
+([Excrete] "Enter a filename")
+([Refrigerate] fname; [Eat])
+([Refrigerate] contents; ([read](fname)))
 
-"0" ~> absorb @acount
-"1" ~> absorb @pow
+([Refrigerate] acount; "0")
+([Refrigerate] pow; "1")
 
-mute: this loop iteratively chops off the front of the file contents up to the first A
-@contents.sever("A") ~> absorb @prefix
-@prefix { @contents ~> orbit [
-    (@contents.reverse ~> "$$$").sever("A" ~> @prefix.reverse ~> "$$$").reverse ~> absorb @contents
-    @plus(@acount, "1") ~> absorb @acount
-    @plus(@pow, @pow) ~> absorb @pow
-    @contents.sever("A") ~> absorb @prefix
-]
+[Speak] this loop iteratively chops off the front of the file contents up to the first A
+([Refrigerate] prefix; ([Chop] contents; "A"))
+([Scotty] (([Compare] prefix; contents))
+    ([Refrigerate] contents; ([Vomit] ([Chop] ([Cook] ([Vomit] contents); "$$$$$$"); ([Cook] "A"; ([Cook] ([Vomit] prefix); "$$$$$$")))))
+    ([Refrigerate] acount; ([plus](acount; "1")))
+    ([Refrigerate] pow; ([plus](pow; pow)))
+    ([Refrigerate] prefix; ([Chop] contents; "A"))
+[Beam Me Up])
 
-"File '" ~> @fname ~> "' has " ~> @acount ~> " As" ~> emit
-"2^" ~> @acount ~> " = " ~> @pow ~> emit
+([Excrete] ([Cook] "File '"; ([Cook] fname; ([Cook] "' has "; ([Cook] acount; " As")))))
+([Excrete] ([Cook] "2^"; ([Cook] acount; ([Cook] " = "; pow))))
